@@ -1,0 +1,125 @@
+class Flags(Struct):
+  cluster            = String
+  role               = String
+  env                = String
+  jobName            = String
+  maxPerHost         = Default(Integer, 1)
+  numInstances       = Integer
+  serverNumCpus      = Float
+  serverRamInBytes   = Integer
+  serverDiskInBytes  = Integer
+  serverArgs         = Default(String, '')
+  feederNumInstances = Integer
+  feederNumCpus      = Float
+  feederRamInBytes   = Integer
+  feederDiskInBytes  = Integer
+  feederArgs         = Default(String, '')
+  jvmCmd             = Default(String, '')
+
+class FlagSet(Struct):
+  flags = Flags
+
+iago_announcer = Announcer(
+  portmap = {'admin': 'http', 'aurora': 'admin', 'health': 'admin'}
+)
+
+health_check_config = HealthCheckConfig(
+  initial_interval_secs    = 120,
+  max_consecutive_failures = 3,
+  timeout_secs             = 30
+)
+
+update_config  = UpdateConfig(
+  batch_size             = '{{flags.feederNumInstances}}',
+  watch_secs             = 151,
+  max_per_shard_failures = 3,
+  max_total_failures     = 0)
+
+iago_job = Job(
+  cluster     = '{{flags.cluster}}',
+  role        = '{{flags.role}}',
+  environment = '{{flags.env}}',
+  service     = False,
+  tier        = 'preemptible',
+  constraints = {'host': 'limit:{{flags.maxPerHost}}'},
+  health_check_config = health_check_config,
+  update_config = update_config
+)
+
+##########################
+# Server
+##########################
+
+server_args = [
+  '-admin.port=:{{thermos.ports[http]}}',
+  '-service.port=:{{thermos.ports[thrift]}}',
+  '{{flags.serverArgs}}'
+]
+
+server_resources = Resources(
+  cpu = '{{flags.serverNumCpus}}',
+  ram = '{{flags.serverRamInBytes}}',
+  disk = '{{flags.serverDiskInBytes}}'
+)
+
+server_install_process = Process(
+  name = 'server_install',
+  cmdline = '{{server_install_cmd}}'
+)
+
+server_jvm_process = Process(
+  name = 'server_jvm',
+  cmdline = '{{flags.jvmCmd}} {{flags.serverArgs}}'
+)
+
+server_task = SequentialTask(
+  resources = server_resources,
+  processes = [server_install_process, server_jvm_process]
+)
+
+server_job = iago_job(
+  name = 'parrot_server_{{flags.jobName}}',
+  task = server_task,
+  instances = '{{flags.numInstances}}',
+  announce = iago_announcer(primary_port = 'thrift')
+)
+
+##########################
+# Feeder
+##########################
+
+feeder_args = [
+  '-admin.port=:{{thermos.ports[http]}}',
+  '{{flags.feederArgs}}'
+]
+
+feeder_resources = Resources(
+  cpu = '{{flags.feederNumCpus}}',
+  ram = '{{flags.feederRamInBytes}}',
+  disk = '{{flags.feederDiskInBytes}}'
+)
+
+feeder_install_process = Process(
+  name = 'feeder_install',
+  cmdline = '{{feeder_install_cmd}}'
+)
+
+feeder_jvm_process = Process(
+  name = 'feeder_jvm',
+  cmdline = '{{flags.jvmCmd}} {{flags.feederArgs}}'
+)
+
+feeder_task = SequentialTask(
+  resources = feeder_resources,
+  processes = [feeder_install_process, feeder_jvm_process]
+)
+
+feeder_job = iago_job(
+  name = 'parrot_feeder_{{flags.jobName}}',
+  task = feeder_task,
+  instances = '{{flags.feederNumInstances}}',
+  announce = iago_announcer(primary_port = 'http'),
+  max_task_failures = 3
+)
+
+jobs = [server_job.bind(FlagSet()), feeder_job.bind(flags = FlagSet())]
