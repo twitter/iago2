@@ -4,7 +4,7 @@
 
 ## Documentation
 
-Please read the <a href="https://github.com/twitter/iago2/docs/index.rst">iago2 user guide</a>
+Please read the <a href="https://github.com/twitter/iago2/blob/master/docs/index.rst">iago2 user guide</a>
 
 ## Reporting Issues
 

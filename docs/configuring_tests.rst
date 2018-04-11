@@ -3,7 +3,7 @@ Configuring and Launching Your Test
 
 To configure and execute your test, build the jvm application and launch it with ``com.twitter.iago.launcher.Main``.
 
-There are several parameters to pass to ``com.twitter.iago.launcher.Main``. A good one to `figure out early <overview.html#supported-services>`__ is ``transportScheme``.
+There are several parameters to pass to ``com.twitter.iago.launcher.Main``. A good one to `figure out early <overview.rst#supported-services>`__ is ``transportScheme``.
 
 The following example shows parameters for testing a Thrift service in Local mode (launches Iago feeder and server on your local machine):
 
@@ -60,7 +60,7 @@ Iago Feeder Parameters
 |                                   |   -cachedSeconds=5                                                       |
 +-----------------------------------+------------+-------------------------------------------------------------+
 | ``cutoff``                        | `6`        | How many seconds the feeder waits for the server request    |
-|                                   |            | queue to empty. Usually set this to 1.2*``cachedSeconds``.  |
+|                                   |            | queue to empty. Usually set this to 1.2 * ``cachedSeconds``.|
 |                                   +------------+-------------------------------------------------------------+
 |                                   | .. code-block:: bash                                                     |
 |                                   |                                                                          |

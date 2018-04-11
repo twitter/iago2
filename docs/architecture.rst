@@ -3,7 +3,7 @@ Iago Architecture Overview
 
 Iago consists of *feeders* and *servers*. A *feeder* reads your transaction source. A *server* formats and delivers requests to the service you want to test. The feeder contains a ``Poller`` object, which is responsible for guaranteeing *cachedSeconds* worth of transactions in the pipeline to the Iago servers.
 
-Metrics are available in logs and in graphs as described in `Metrics <metrics.html>`__.
+Metrics are available in logs and in graphs as described in `Metrics <metrics.rst>`__.
 
 The Iago servers generate requests to your service. Together, all Iago servers generate the specified number of requests per minute. A Iago server's ``RecordProcessor`` object executes your service and maps the transaction to the format required by your service.
 

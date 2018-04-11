@@ -1,5 +1,5 @@
-Using Iago as a Library
------------------------
+Using Iago2 as a Library
+------------------------
 
 While Iago provides everything you need to target your API with a large distributed loadtest with just a small log processor,
 it also exposes a library of classes for log processing, traffic replay, & load generation. These can be used in your Iago configuration or incorporated in your application as a library.
@@ -8,10 +8,10 @@ iago/server
 ~~~~~~~~~~~
 
 ``ParrotRequest``
-  Parrot's internal representation of a request
+  Iago's internal representation of a request
 
 ``ParrotTransport`` (``FinagleTransport``, ``KestrelTransport``, ``MemcacheTransport``, ``ParrotUdpTransport``, ``ThriftTransport``)
-  Interchangeable transport layer for requests to be sent. Parrot contains transport implementations for the following protocols: HTTP (``FinagleTransport``), Kestrel, Memcache, raw UDP and Thrift.
+  Interchangeable transport layer for requests to be sent. Iago contains transport implementations for the following protocols: HTTP (``FinagleTransport``), Kestrel, Memcache, raw UDP and Thrift.
 
 ``RequestConsumer``
   Queues ``ParrotRequest``\ s and sends them out on a ``ParrotTransport`` at a rate determined by requestDistribution
