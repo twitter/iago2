@@ -14,7 +14,6 @@ class Flags(Struct):
   feederRamInBytes   = Integer
   feederDiskInBytes  = Integer
   feederArgs         = Default(String, '')
-  jvmCmd             = Default(String, '')
 
 class FlagSet(Struct):
   flags = Flags
@@ -64,12 +63,14 @@ server_resources = Resources(
 
 server_install_process = Process(
   name = 'server_install',
+  # REPLACE {{server_install_cmd}} with the real cmd to install your iago2 load test bundle on Mesos
   cmdline = '{{server_install_cmd}}'
 )
 
 server_jvm_process = Process(
   name = 'server_jvm',
-  cmdline = '{{flags.jvmCmd}} {{flags.serverArgs}}'
+  # REPLACE {{server_jvm_cmd}} with the real cmd to start iago2 server, e.g., "/path/to/bin/java -server -cp ./loadtest-package-dist.jar"
+  cmdline = '{{server_jvm_cmd}} com.twitter.iago.server.Main ' + ' '.join(server_args)
 )
 
 server_task = SequentialTask(
@@ -101,12 +102,14 @@ feeder_resources = Resources(
 
 feeder_install_process = Process(
   name = 'feeder_install',
+  # REPLACE {{feeder_install_cmd}} with the real cmd to install your iago2 load test bundle on Mesos
   cmdline = '{{feeder_install_cmd}}'
 )
 
 feeder_jvm_process = Process(
   name = 'feeder_jvm',
-  cmdline = '{{flags.jvmCmd}} {{flags.feederArgs}}'
+  # REPLACE {{feeder_jvm_cmd}} with the real cmd to start iago2 feeder, e.g., "/path/to/bin/java -server -cp ./loadtest-package-dist.jar"
+  cmdline = '{{feeder_jvm_cmd}} com.twitter.iago.feeder.Main ' + ' '.join(feeder_args)
 )
 
 feeder_task = SequentialTask(

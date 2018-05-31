@@ -74,7 +74,7 @@ class FeedConsumer(parrot: RemoteParrot, state: => FeederState.Value, consumerQu
       "wrote batch of size %d to %s rps=%g depth=%g(target=%g) status=%s lines=%d",
       request.size,
       parrot.address,
-      // TF-1200, Iago Server doesn't include RPS in ParrotStatus.
+      // Iago Server doesn't include RPS in ParrotStatus.
       success.requestsPerSecond getOrElse 0d,
       success.queueDepth getOrElse 0d,
       parrot.targetDepth,

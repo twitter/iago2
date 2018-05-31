@@ -95,7 +95,7 @@ trait ParrotFlags {
   val zkNodeF = flag(
     "zkNode",
     "/example/service/parrot/disco",
-    "Zookeeper node Parrot will register its servers at"
+    "Zookeeper node Iago will register its servers at"
   )
   val finagleTimeoutF = flag(
     "finagleTimeout",

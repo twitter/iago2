@@ -39,6 +39,7 @@ trait AuroraMode extends LauncherMain {
   )
   val noKillBeforeLaunch = localFlags[Boolean](
     "env.aurora.noKillBeforeLaunch",
+    false,
     "Do not kill any existing tasks before launch"
   )
   val feederNumInstances =

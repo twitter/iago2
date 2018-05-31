@@ -33,7 +33,18 @@ The following example shows parameters for testing a Thrift service in Local mod
     -jobName="myservice_loadtest" \
     -yes
 
-Please also check the `example source code <https://github.com/twitter/iago2/tree/master/examples/echo>`__
+Please also check out the `example source code <https://github.com/twitter/iago2/tree/master/examples/echo>`__
+
+
+Examples
+~~~~~~~~
+
+1. Local mode Thrift service load test `launching script <https://github.com/twitter/iago2/tree/master/examples/echo/src/scripts/echo-loadtest.sh>`__
+2. Local mode Http service load test `launching script <https://github.com/twitter/iago2/tree/master/examples/web/src/scripts/web-loadtest.sh>`__
+3. Aurora mode load test `launching script <https://github.com/twitter/iago2/tree/master/examples/web/src/scripts/web-loadtest-aurora.sh>`__
+4. Aurora mode load test `killing script <https://github.com/twitter/iago2/tree/master/examples/web/src/scripts/kill-web-loadtest-aurora.sh>`__
+
+Please check out the README.md in each example project for instructions on how to build the project and run the examples.
 
 
 .. note::
@@ -305,11 +316,36 @@ Both the Iago feeder and the Iago server need to know about the following parame
 |                                   |                                                                          |
 |                                   |   -finagleTimeout=5.seconds                                              |
 +-----------------------------------+---------------+----------------------------------------------------------+
-| ``jobName``                       | `parrot`      | Name of your load test.                                  |
+| ``jobName``                       | `"parrot"`    | Name of your load test.                                  |
 |                                   +---------------+----------------------------------------------------------+
 |                                   | .. code-block:: bash                                                     |
 |                                   |                                                                          |
 |                                   |   -jobName=myservice_loadtest                                            |
++-----------------------------------+---------------+----------------------------------------------------------+
+| ``parrotHosts``                   | `":*"`        | A comma delimited string of hostname:port pairs.         |
+|                                   |               | This is used when zookeeper is not used.                 |
+|                                   +---------------+----------------------------------------------------------+
+|                                   | .. code-block:: bash                                                     |
+|                                   |                                                                          |
+|                                   |   -parrotHosts=host.twitter.com:2080                                     |
++-----------------------------------+---------------+----------------------------------------------------------+
+| ``zkHostName``                    | `"?"`         | Zookeeper host Iago will register its servers with.      |
+|                                   +---------------+----------------------------------------------------------+
+|                                   | .. code-block:: bash                                                     |
+|                                   |                                                                          |
+|                                   |   -zkHostName=zookeeper.twitter.com                                      |
++-----------------------------------+---------------+----------------------------------------------------------+
+| ``zkNode``                        | `"?"`         | Zookeeper node Iago will register its servers at.        |
+|                                   +---------------+----------------------------------------------------------+
+|                                   | .. code-block:: bash                                                     |
+|                                   |                                                                          |
+|                                   |   -zkNode=/example/iago/disco                                            |
++-----------------------------------+---------------+----------------------------------------------------------+
+| ``zkPort``                        | `2181`        | Zookeeper port Iago will register its servers with.      |
+|                                   +---------------+----------------------------------------------------------+
+|                                   | .. code-block:: bash                                                     |
+|                                   |                                                                          |
+|                                   |   -zkPort=2182                                                           |
 +-----------------------------------+--------------------------------------------------------------------------+
 
 
@@ -386,9 +422,9 @@ In Aurora mode the launcher will deploy Iago feeder and server jobs to Mesos.
 +-----------------------------------+---------------+----------------------------------------------------------+
 | ``env.aurora.config``             | **N/A**       | The aurora configuration file for deploying feeder and   |
 |                                   | (required)    | server jobs.                                             |
-|                                   |               | `"src/main/resources/iago.aurora"` is an example aurora  |
-|                                   |               | config file to use. You can also define your own aurora  |
-|                                   |               | configuration file based on it.                          |
+|                                   |               | `"src/main/resources/iago.aurora"` is an aurora config   |
+|                                   |               | template ready to use. You can also define your own      |
+|                                   |               | aurora configuration file based on it.                   |
 |                                   +---------------+----------------------------------------------------------+
 |                                   | .. code-block:: bash                                                     |
 |                                   |                                                                          |
@@ -415,8 +451,7 @@ In Aurora mode the launcher will deploy Iago feeder and server jobs to Mesos.
 |                                   |                                                                          |
 |                                   |   -env.aurora.maxPerHost=1                                               |
 +-----------------------------------+---------------+----------------------------------------------------------+
-| ``env.aurora.noKillBeforeLaunch`` | **N/A**       | Do not kill any existing tasks before launch.            |
-|                                   | (required)    |                                                          |
+| ``env.aurora.noKillBeforeLaunch`` | `false`       | Do not kill any existing tasks before launch.            |
 |                                   +---------------+----------------------------------------------------------+
 |                                   | .. code-block:: bash                                                     |
 |                                   |                                                                          |

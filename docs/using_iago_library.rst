@@ -10,8 +10,8 @@ iago/server
 ``ParrotRequest``
   Iago's internal representation of a request
 
-``ParrotTransport`` (``FinagleTransport``, ``KestrelTransport``, ``MemcacheTransport``, ``ParrotUdpTransport``, ``ThriftTransport``)
-  Interchangeable transport layer for requests to be sent. Iago contains transport implementations for the following protocols: HTTP (``FinagleTransport``), Kestrel, Memcache, raw UDP and Thrift.
+``ParrotTransport`` (``FinagleTransport``, ``MemcacheTransport``, ``ParrotUdpTransport``, ``ThriftTransport``)
+  Interchangeable transport layer for requests to be sent. Iago contains transport implementations for the following protocols: HTTP (``FinagleTransport``), Memcache, raw UDP and Thrift.
 
 ``RequestConsumer``
   Queues ``ParrotRequest``\ s and sends them out on a ``ParrotTransport`` at a rate determined by requestDistribution

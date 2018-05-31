@@ -16,7 +16,6 @@ Iago can generate service requests that travel the net in different ways and are
 * HTTP: Use `FinagleTransport <https://github.com/twitter/iago2/tree/master/src/main/scala/com/twitter/iago/server/FinagleTransport.scala>`__
 * Thrift: Use `ThriftTransport <https://github.com/twitter/iago2/tree/master/src/main/scala/com/twitter/iago/server/ThriftTransport.scala>`__
 * Memcached: Use `MemcacheTransport <https://github.com/twitter/iago2/tree/master/src/main/scala/com/twitter/iago/server/MemcacheTransport.scala>`__
-* Kestrel: Use `KestrelTransport <https://github.com/twitter/iago2/tree/master/src/main/scala/com/twitter/iago/server/KestrelTransport.scala>`__
 * UDP: Use `ParrotUdpTransport <https://github.com/twitter/iago2/tree/master/src/main/scala/com/twitter/iago/server/ParrotUdpTransport.scala>`__
 
 Your service is typically an HTTP or Thrift service written in either Scala or Java.
