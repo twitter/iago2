@@ -18,12 +18,11 @@ package com.twitter.iago.server
 
 import java.net.{InetAddress, InetSocketAddress}
 import com.twitter.app.App
-import com.twitter.finagle.builder.Server
 import com.twitter.iago.integration.HttpServer
 import com.twitter.iago.util.LoadTestStub
 import com.twitter.iago.{ParrotConfig, ParrotServerFlags}
-import com.twitter.logging.Logging
 import com.twitter.finagle.http.Response
+import com.twitter.server.logging.{Logging => JDK14Logging}
 import org.scalatest.{BeforeAndAfterEach, OneInstancePerTest, TestSuite}
 import scala.language.{existentials, implicitConversions}
 
@@ -61,7 +60,7 @@ trait ServerFixture extends BeforeAndAfterEach with OneInstancePerTest {
     }
   }
 
-  class TestServerApp extends App with ParrotServerFlags with Logging {
+  class TestServerApp extends App with ParrotServerFlags with JDK14Logging {
     lazy val parrotServer = new ParrotServer(this)
 
     def main() {

@@ -47,16 +47,16 @@ trait AuroraMode extends LauncherMain {
   val feederNumCpus =
     localFlags[Double]("env.aurora.feederNumCpus", "Number of CPUs to use for feeder jobs.")
   val feederRamInBytes =
-    localFlags[Int]("env.aurora.feederRamInBytes", "Amount of RAM in bytes to use for feeder jobs.")
-  val feederDiskInBytes = localFlags[Int](
+    localFlags[Long]("env.aurora.feederRamInBytes", "Amount of RAM in bytes to use for feeder jobs.")
+  val feederDiskInBytes = localFlags[Long](
     "env.aurora.feederDiskInBytes",
     "Amount of disk in bytes to use for feeder jobs."
   )
   val serverNumCpus =
     localFlags[Double]("env.aurora.serverNumCpus", "Number of CPUs to use for server jobs.")
   val serverRamInBytes =
-    localFlags[Int]("env.aurora.serverRamInBytes", "Amount of RAM in bytes to use for server jobs.")
-  val serverDiskInBytes = localFlags[Int](
+    localFlags[Long]("env.aurora.serverRamInBytes", "Amount of RAM in bytes to use for server jobs.")
+  val serverDiskInBytes = localFlags[Long](
     "env.aurora.serverDiskInBytes",
     "Amount of disk in bytes to use for server jobs."
   )

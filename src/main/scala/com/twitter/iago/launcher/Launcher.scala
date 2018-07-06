@@ -15,7 +15,7 @@ package com.twitter.iago.launcher
 
 import com.twitter.app.{App, Flag, GlobalFlag}
 import com.twitter.iago.{ParrotFeederFlags, ParrotServerFlags}
-import com.twitter.logging.Logging
+import com.twitter.server.logging.{Logging => JDK14Logging}
 import com.twitter.server.Hooks
 import scala.collection.mutable
 import scala.sys.SystemProperties
@@ -30,7 +30,7 @@ object Main extends LauncherMain with LocalMode with AuroraMode
 class LauncherMain extends App
   with ParrotServerFlags
   with ParrotFeederFlags
-  with Logging
+  with JDK14Logging
   with Hooks
 {
   val systemProperties = new SystemProperties()

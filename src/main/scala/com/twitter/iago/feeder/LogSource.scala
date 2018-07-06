@@ -24,7 +24,16 @@ trait LogSource extends Iterator[String] {
 class LogSourceImpl(file: String) extends LogSource {
   protected var source = init()
 
-  protected def init(): Iterator[String] = scala.io.Source.fromFile(file)("UTF-8").getLines()
+  private lazy val logLines = {
+    val inputSource = scala.io.Source.fromFile(file)("UTF-8")
+    val inputLines = inputSource.getLines().toList
+    inputSource.close()
+    inputLines
+  }
+
+  protected def init(): Iterator[String] = {
+    logLines.toIterator
+  }
 
   def next(): String = source.next()
   def hasNext: Boolean = source.hasNext
