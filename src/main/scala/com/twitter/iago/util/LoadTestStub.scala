@@ -23,10 +23,8 @@ import com.twitter.iago.server.ParrotService
 
 class LoadTestStub(service: ParrotService[ParrotRequest, Response]) extends RecordProcessor {
   val log = Logger.get(getClass.getName)
-  override def processLines(lines: Seq[String]) {
-    lines foreach { line =>
-      log.debug("LoadTestStub: " + line)
-      service(new ParrotRequest(rawLine = line))
-    }
+  override def processLine(line: String) {
+    log.debug("LoadTestStub: " + line)
+    service(new ParrotRequest(rawLine = line))
   }
 }

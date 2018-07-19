@@ -115,10 +115,8 @@ class ParrotUdpTransportSpec
             val transport =
               new TestParrotUdpTransport(new InetSocketAddress("localhost", victimPort))
             val recordProcessor = new RecordProcessor {
-              override def processLines(lines: Seq[String]) {
-                lines foreach { line =>
-                  Some(service(new ParrotRequest(None, Nil, null, line)))
-                }
+              override def processLine(line: String) {
+                Some(service(new ParrotRequest(None, Nil, null, line)))
               }
             }
           }.asInstanceOf[ParrotConfig[ParrotRequest, Object]]
@@ -170,7 +168,7 @@ class ParrotUdpTransportSpec
       override lazy val parrot = new ParrotConfig[ParrotRequest, String](this) {
         val transport = new TestParrotUdpTransport(new InetSocketAddress("localhost", victimPort))
         val recordProcessor = new RecordProcessor {
-          override def processLines(lines: Seq[String]): Unit = ()
+          override def processLine(line: String): Unit = ()
         }
       }.asInstanceOf[ParrotConfig[ParrotRequest, Object]]
     }

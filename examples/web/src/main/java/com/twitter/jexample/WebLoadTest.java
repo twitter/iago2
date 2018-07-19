@@ -23,37 +23,35 @@ public class WebLoadTest extends LoadTest {
     this.service = parrotService;
   }
 
-  public void processLines(List<String> lines) {
-    for (String line : lines) {
-      ParrotRequest request = new ParrotRequest(
-          scala.Some.apply(new Tuple2<String, Object>("www.google.com", 80)),
-          new ArrayBuffer<Tuple2<String, String>>(),
-          new Uri(line, new ArrayBuffer<Tuple2<String, String>>()),
-          "",
-          scala.Option.apply(null),
-          new ThriftClientRequest(new byte[1], false),
-          new Promise(),
-          new ArrayBuffer<Tuple2<String, String>>(),
-          "GET",
-          "",
-          false,
-          new ArrayBuffer<FormElement>(),
-          1
-      );
-      Future<Response> future = service.apply(request);
-      future.addEventListener(new FutureEventListener<Response>() {
-        public void onSuccess(Response resp) {
-          if(resp.statusCode() >= 200 && resp.statusCode() < 300) {
-            System.out.println(String.valueOf(resp.statusCode()) + " OK");
-          } else {
-            System.out.println("Error: " + String.valueOf(resp.statusCode()) + " " + resp.status().reason());
-          }
+  public void processLine(String line) {
+    ParrotRequest request = new ParrotRequest(
+        scala.Some.apply(new Tuple2<String, Object>("www.google.com", 80)),
+        new ArrayBuffer<Tuple2<String, String>>(),
+        new Uri(line, new ArrayBuffer<Tuple2<String, String>>()),
+        "",
+        scala.Option.apply(null),
+        new ThriftClientRequest(new byte[1], false),
+        new Promise(),
+        new ArrayBuffer<Tuple2<String, String>>(),
+        "GET",
+        "",
+        false,
+        new ArrayBuffer<FormElement>(),
+        1
+    );
+    Future<Response> future = service.apply(request);
+    future.addEventListener(new FutureEventListener<Response>() {
+      public void onSuccess(Response resp) {
+        if(resp.statusCode() >= 200 && resp.statusCode() < 300) {
+          System.out.println(String.valueOf(resp.statusCode()) + " OK");
+        } else {
+          System.out.println("Error: " + String.valueOf(resp.statusCode()) + " " + resp.status().reason());
         }
+      }
 
-        public void onFailure(Throwable cause) {
-          System.out.println("Error: " + cause.toString());
-        }
-      });
-    }
+      public void onFailure(Throwable cause) {
+        System.out.println("Error: " + cause.toString());
+      }
+    });
   }
 }

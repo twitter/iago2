@@ -24,18 +24,16 @@ public class EchoLoadTest extends ThriftLoadTest {
         new NullStatsReceiver());
   }
 
-  public void processLines(List<String> lines) {
-    for (String line : lines) {
-      Future<String> future = client.echo(line);
-      future.addEventListener(new FutureEventListener<String>() {
-        public void onSuccess(String msg) {
-          System.out.println("response: " + msg);
-        }
+  public void processLine(String line) {
+    Future<String> future = client.echo(line);
+    future.addEventListener(new FutureEventListener<String>() {
+      public void onSuccess(String msg) {
+        System.out.println("response: " + msg);
+      }
 
-        public void onFailure(Throwable cause) {
-          System.out.println("Error: " + cause);
-        }
-      });
-    }
+      public void onFailure(Throwable cause) {
+        System.out.println("Error: " + cause);
+      }
+    });
   }
 }

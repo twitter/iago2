@@ -25,17 +25,15 @@ class TestThriftRecordProcessor(pService: ParrotService[ParrotRequest, Array[Byt
   private val log = Logger.get(getClass)
   var response = ""
 
-  override def processLines(lines: Seq[String]) {
-    lines foreach { line =>
-      Trace.traceService("Parrot", "TestThriftRecordProcessor.processLines") {
-        val future = service(new ThriftClientRequest(serialize("echo", "message", "hello"), false))
-        future onSuccess { bytes =>
-          response = bytes.toString
-          log.debug("ThriftRecordProcessorSpec: response: %s", response)
-        }
-        future onFailure { throwable =>
-          log.error(throwable, "ThriftRecordProcessorSpec: failure response")
-        }
+  override def processLine(line: String) {
+    Trace.traceService("Parrot", "TestThriftRecordProcessor.processLine") {
+      val future = service(new ThriftClientRequest(serialize("echo", "message", "hello"), false))
+      future onSuccess { bytes =>
+        response = bytes.toString
+        log.debug("ThriftRecordProcessorSpec: response: %s", response)
+      }
+      future onFailure { throwable =>
+        log.error(throwable, "ThriftRecordProcessorSpec: failure response")
       }
     }
   }

@@ -34,6 +34,10 @@ Iago2 is under <a href="https://github.com/twitter/iago2/blob/master/LICENSE">Ap
 
 ## ChangeLog
 
+2018-07-23
+
+* removed RecordProcessor.processLines
+
 2018-07-06
 
 * replaced remaining com.twitter.logging.Logging with com.twitter.server.logging.Logging

@@ -41,24 +41,21 @@ class SimpleRecordProcessor(
 
   val badlines = config.statsReceiver.counter("bad_lines")
 
-  override def processLines(lines: Seq[String]) {
-    log.trace("SimpleRecordProcessor.processLines: processing %d lines", lines.size)
-    for (line <- lines) {
-      Trace.traceService("Parrot", "SimpleRecordProcessor.processLines") {
-        val p = UriParser(line)
-        log.trace("SimpleRecordProcessor.processLines: line is %s", line)
-        UriParser(line) match {
-          case Return(uri) =>
-            if (!uri.path.isEmpty && !line.startsWith("#"))
-              service(new ParrotRequest(hostHeader, Nil, uri, line))
-          case Throw(t) =>
-            if (exceptionCount < 3)
-              log.warning("exception\n\t%s\nwhile processing line\n\t%s", t.getMessage(), line)
-            else if (exceptionCount == 3) log.warning("more exceptions ...")
-            exceptionCount += 1
-            badlines.incr()
-            config.statsReceiver.counter("bad_lines/" + t.getClass.getName).incr()
-        }
+  override def processLine(line: String) {
+    Trace.traceService("Parrot", "SimpleRecordProcessor.processLine") {
+      val p = UriParser(line)
+      log.trace("SimpleRecordProcessor.processLine: line is %s", line)
+      UriParser(line) match {
+        case Return(uri) =>
+          if (!uri.path.isEmpty && !line.startsWith("#"))
+            service(new ParrotRequest(hostHeader, Nil, uri, line))
+        case Throw(t) =>
+          if (exceptionCount < 3)
+            log.warning("exception\n\t%s\nwhile processing line\n\t%s", t.getMessage(), line)
+          else if (exceptionCount == 3) log.warning("more exceptions ...")
+          exceptionCount += 1
+          badlines.incr()
+          config.statsReceiver.counter("bad_lines/" + t.getClass.getName).incr()
       }
     }
   }

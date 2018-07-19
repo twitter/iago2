@@ -43,7 +43,7 @@ class MemcacheTransportSpec extends ParrotTest with ServerFixture with FeederFix
             val transport = MemcacheTransportFactory(config)
             val recordProcessor = new RecordProcessor {
               // never used
-              override def processLines(lines: Seq[String]) {}
+              override def processLine(line: String) {}
             }
           }.asInstanceOf[ParrotConfig[ParrotRequest, Object]]
           def transport = parrot.transport

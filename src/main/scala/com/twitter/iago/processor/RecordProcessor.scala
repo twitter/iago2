@@ -15,13 +15,11 @@ limitations under the License.
  */
 package com.twitter.iago.processor
 
-import collection.JavaConverters._
 import com.twitter.iago.server.{ParrotRequest, ParrotService, ParrotThriftServiceWrapper}
 
 trait RecordProcessor {
   def start(): Unit = ()
-  def processLine(line: String): Unit = processLines(Seq(line))
-  def processLines(lines: Seq[String]) = ()
+  def processLine(line: String): Unit = ()
   def shutdown(): Unit = ()
 }
 
@@ -33,21 +31,7 @@ abstract class ThriftRecordProcessor(parrotService: ParrotService[ParrotRequest,
 /**
  * This is here to support Java users of Parrot. Scala users should simply mixin the RecordProcessor trait
  */
-abstract class LoadTest extends RecordProcessor {
-  def processLines(lines: java.util.List[String])
-
-  override def processLines(lines: Seq[String]) {
-    val linesAsList: java.util.List[String] = lines.asJava
-    processLines(linesAsList)
-  }
-}
+abstract class LoadTest extends RecordProcessor
 
 abstract class ThriftLoadTest(pService: ParrotService[ParrotRequest, Array[Byte]])
-    extends ThriftRecordProcessor(pService) {
-  def processLines(lines: java.util.List[String])
-
-  override def processLines(lines: Seq[String]) {
-    val linesAsList: java.util.List[String] = lines.asJava
-    processLines(linesAsList)
-  }
-}
+    extends ThriftRecordProcessor(pService)

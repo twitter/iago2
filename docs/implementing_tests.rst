@@ -80,14 +80,12 @@ To implement a Thrift load test in Scala, you must extend the Iago server's ``Th
     )
     val log = Logger.get(getClass)
 
-    override def processLines(lines: Seq[String]) {                                       // 5
-      lines map { line =>
-        client.echo(line) respond { rep =>                                                // 6
-          if (rep == "hello") {
-            client.echo("IT'S TALKING TO US")                                             // 7
-          }
-          log.info("response: " + rep)                                                    // 8
+    override def processLine(line: String) {                                              // 5
+      client.echo(line) respond { rep =>                                                  // 6
+        if (rep == "hello") {
+          client.echo("IT'S TALKING TO US")                                               // 7
         }
+        log.info("response: " + rep)                                                      // 8
       }
     }
   }
@@ -135,38 +133,36 @@ To implement a load test in Java, you must extend the Iago server's ``LoadTest``
       this.service = parrotService;
     }
 
-    public void processLines(List<String> lines) {                                        // 5
-      for (String line : lines) {
-        ParrotRequest request = new ParrotRequest(                                        // 4
-            scala.Some.apply(new Tuple2<String, Object>("www.google.com", 80)),
-            new ArrayBuffer<Tuple2<String, String>>(),
-            new Uri(line, new ArrayBuffer<Tuple2<String, String>>()),
-            "",
-            scala.Option.apply(null),
-            new ThriftClientRequest(new byte[1], false),
-            new Promise(),
-            new ArrayBuffer<Tuple2<String, String>>(),
-            "GET",
-            "",
-            false,
-            new ArrayBuffer<FormElement>(),
-            1
-        );
-        Future<Response> future = service.apply(request);                                 // 6
-        future.addEventListener(new FutureEventListener<Response>() {                     // 8
-          public void onSuccess(Response resp) {
-            if(resp.statusCode() >= 200 && resp.statusCode() < 300) {
-              System.out.println(String.valueOf(resp.statusCode()) + " OK");
-            } else {
-              System.out.println("Error: " + String.valueOf(resp.statusCode()) + " " + resp.status().reason());
-            }
+    public void processLine(String line) {                                                // 5
+      ParrotRequest request = new ParrotRequest(                                          // 4
+          scala.Some.apply(new Tuple2<String, Object>("www.google.com", 80)),
+          new ArrayBuffer<Tuple2<String, String>>(),
+          new Uri(line, new ArrayBuffer<Tuple2<String, String>>()),
+          "",
+          scala.Option.apply(null),
+          new ThriftClientRequest(new byte[1], false),
+          new Promise(),
+          new ArrayBuffer<Tuple2<String, String>>(),
+          "GET",
+          "",
+          false,
+          new ArrayBuffer<FormElement>(),
+          1
+      );
+      Future<Response> future = service.apply(request);                                   // 6
+      future.addEventListener(new FutureEventListener<Response>() {                       // 8
+        public void onSuccess(Response resp) {
+          if(resp.statusCode() >= 200 && resp.statusCode() < 300) {
+            System.out.println(String.valueOf(resp.statusCode()) + " OK");
+          } else {
+            System.out.println("Error: " + String.valueOf(resp.statusCode()) + " " + resp.status().reason());
           }
+        }
 
-          public void onFailure(Throwable cause) {
-            System.out.println("Error: " + cause.toString());
-          }
-        });
-      }
+        public void onFailure(Throwable cause) {
+          System.out.println("Error: " + cause.toString());
+        }
+      });
     }
   }
 
@@ -231,19 +227,17 @@ To implement a Thrift load test in Java, you must extend the Iago server's ``Thr
           new NullStatsReceiver());
     }
 
-    public void processLines(List<String> lines) {                                        // 5
-      for (String line : lines) {
-        Future<String> future = client.echo(line);                                        // 6
-        future.addEventListener(new FutureEventListener<String>() {                       // 8
-          public void onSuccess(String msg) {
-            System.out.println("response: " + msg);
-          }
+    public void processLine(String line) {                                                // 5
+      Future<String> future = client.echo(line);                                          // 6
+      future.addEventListener(new FutureEventListener<String>() {                         // 8
+        public void onSuccess(String msg) {
+          System.out.println("response: " + msg);
+        }
 
-          public void onFailure(Throwable cause) {
-            System.out.println("Error: " + cause);
-          }
-        });
-      }
+        public void onFailure(Throwable cause) {
+          System.out.println("Error: " + cause);
+        }
+      });
     }
   }
 
@@ -278,7 +272,7 @@ You define your Iago subclass to execute your service and map transactions to re
 2. Import ``com.twitter.iago.server.ParrotService`` and ``com.twitter.iago.server.ParrotRequest``
 3. For Thrift service, create an instance of your service to be placed under test.
 4. For Http service, create an instance of ParrotRequest to contain your http request.
-5. Override ``processLines`` or ``processLine`` method to format the request and execute your service.
+5. Override ``processLine`` method to format the request and execute your service.
 6. Iago adds the request to its request queue.
 7. Optionally, you can initiate a new request based on the response to a previous one.
 8. Optionally, do something with the response. In this example, the response is logged.
