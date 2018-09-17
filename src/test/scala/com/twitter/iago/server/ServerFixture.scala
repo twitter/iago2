@@ -29,11 +29,12 @@ import scala.language.{existentials, implicitConversions}
 trait ServerFixture extends BeforeAndAfterEach with OneInstancePerTest {
   this: TestSuite =>
 
+  val httpServer: HttpServer = new HttpServer
   val httpServerAddress = new InetSocketAddress(InetAddress.getLoopbackAddress, 0)
-  val testVictim = "localhost:" + httpServerAddress.getPort.toString
+  lazy val testVictim = "localhost:" + httpServer.boundAddress.getPort.toString
 
   override def beforeEach(): Unit = {
-    HttpServer.serve(httpServerAddress)
+    httpServer.serve(httpServerAddress)
     super.beforeEach() // To be stackable, must call super.beforeEach last
   }
 
@@ -41,7 +42,7 @@ trait ServerFixture extends BeforeAndAfterEach with OneInstancePerTest {
     try {
       super.afterEach() // To be stackable, must call super.afterEach first
     } finally {
-      HttpServer.close()
+      httpServer.close()
     }
   }
 

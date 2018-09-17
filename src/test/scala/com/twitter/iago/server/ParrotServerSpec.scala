@@ -19,7 +19,6 @@ import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
 
 import com.twitter.iago.ParrotTest
-import com.twitter.iago.integration.HttpServer
 import com.twitter.iago.thriftscala.{ParrotState, ParrotStatus}
 import com.twitter.logging.Logger
 import com.twitter.util._
@@ -39,11 +38,15 @@ class ParrotServerSpec
   val log = Logger.get(getClass.getName)
   val servicePort = { new InetSocketAddress(0) }.getPort.toString
 
-  dumbTestServer.nonExitingMain(
-    Array[String]("-service.port=:" + servicePort, "-victimHostPort=" + testVictim)
-  )
-  val parrotServer = dumbTestServer.parrotServer
-  val transport = dumbTestServer.parrot.transport.asInstanceOf[DumbTransport]
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    dumbTestServer.nonExitingMain(
+      Array[String]("-service.port=:" + servicePort, "-victimHostPort=" + testVictim)
+    )
+  }
+
+  def parrotServer = dumbTestServer.parrotServer
+  def transport = dumbTestServer.parrot.transport.asInstanceOf[DumbTransport]
 
   "ParrotServer" should {
     val emptyLines = Seq[String]()

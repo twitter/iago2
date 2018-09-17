@@ -15,8 +15,6 @@ limitations under the License.
  */
 package com.twitter.iago.integration
 
-import java.net.InetSocketAddress
-
 import com.twitter.iago.feeder.{FeederFixture, ParrotFeeder}
 import com.twitter.iago.processor.TestRecordProcessor
 import com.twitter.iago.server._
@@ -71,24 +69,23 @@ class EndToEndSpec extends ParrotTest with FeederFixture with ServerFixture {
       waitForServer(server.parrotServer.done, seconds * 2)
       val parrot = server.parrot
       val (requestsRead, allRequests, rp) = report(feeder.feeder, parrot)
-      val transport = parrot.transport.asInstanceOf[FinagleTransport]
       log.debug(
         "EndToEndSpec: transport.allRequests (%d) == totalRequests (%d): " +
-          (transport.allRequests == totalRequests),
-        transport.allRequests,
+          (allRequests == totalRequests.toLong),
+        allRequests,
         totalRequests
       )
-      transport.allRequests must be(totalRequests)
+      allRequests must be(totalRequests.toLong)
       val untilNow = start.untilNow.inNanoseconds.toDouble / Duration.NanosPerSecond.toDouble
       untilNow must be < (seconds * 1.20)
       untilNow must be > (seconds * 0.80)
       log.debug(
         "EndToEndSpec: transport.allRequests (%d) == requestsRead (%d): " +
-          (transport.allRequests == requestsRead),
-        transport.allRequests,
+          (allRequests == requestsRead),
+        allRequests,
         requestsRead
       )
-      transport.allRequests must be(requestsRead)
+      allRequests must be(requestsRead)
       log.debug(
         "EndToEndSpec: rp.responded (%d) == requestsRead (%d): " + (rp.responded == requestsRead),
         rp.responded,
@@ -118,7 +115,7 @@ class EndToEndSpec extends ParrotTest with FeederFixture with ServerFixture {
       )
       waitForServer(server.parrotServer.done, seconds * 2)
       val (requestsRead, allRequests, rp) = report(feeder.feeder, server.parrot)
-      allRequests must be < requestsRead.toInt
+      allRequests must be < requestsRead.toLong
       assert(rp.properlyShutDown)
     }
   }
@@ -136,11 +133,11 @@ class EndToEndSpec extends ParrotTest with FeederFixture with ServerFixture {
   private[this] def report(
     feeder: ParrotFeeder,
     parrot: ParrotConfig[ParrotRequest, Object]
-  ): (Long, Int, TestRecordProcessor) = {
+  ): (Long, Long, TestRecordProcessor) = {
     val transport = parrot.transport.asInstanceOf[FinagleTransport]
     val result = (
       feeder.requestsRead.get(),
-      transport.allRequests,
+      transport.allRequests.get(),
       parrot.recordProcessor.asInstanceOf[TestRecordProcessor]
     )
     val (requestsRead, allRequests, rp) = result

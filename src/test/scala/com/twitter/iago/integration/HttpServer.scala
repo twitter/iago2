@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * how many requests it receives for the purposes of integration testing. It
  * also handles exceptions just in case odd things happen.
  */
-object HttpServer {
+class HttpServer {
   val requestCount = new AtomicInteger(0)
   private var server: ListeningServer = _
 
@@ -59,7 +59,7 @@ object HttpServer {
     }
   }
 
-  def serve(address: InetSocketAddress): Unit = {
+  def serve(address: InetSocketAddress): ListeningServer = {
     val handleExceptions = new HandleExceptions
     val respond = new Respond
 
@@ -69,7 +69,10 @@ object HttpServer {
     server = Http.server
       .withLabel("httpserver")
       .serve(address, myService)
+    server
   }
+
+  def boundAddress: InetSocketAddress = server.boundAddress.asInstanceOf[InetSocketAddress]
 
   def close(): Unit = {
     Await.result(server.close())

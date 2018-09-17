@@ -15,7 +15,6 @@ limitations under the License.
  */
 package com.twitter.iago.server
 
-import com.twitter.iago.integration.HttpServer
 import com.twitter.iago.processor.TestRecordProcessor
 import com.twitter.iago.{FinagleParrotConfig, ParrotServerFlags, ParrotTest}
 import com.twitter.util.Await
@@ -55,12 +54,12 @@ class FinagleTransportSpec extends ParrotTest with OneInstancePerTest with Serve
     //XXX: Disabled due to com.twitter.finagle.ChannelWriteException: java.net.BindException: Can't assign requested address
     //     on client creation
     if (!sys.props.contains("SKIP_FLAKY")) {
-      "allow us to send http requests to web servers" ignore {
+      "allow us to send http requests to web servers" in {
         val transport = server.parrot.transport.asInstanceOf[FinagleTransport]
         val request = new ParrotRequest
         val future = transport.sendRequest(request)
         Await.result(future) must not be null
-        HttpServer.getAndResetRequests() must be(1)
+        httpServer.getAndResetRequests() must be(1)
       }
     }
 

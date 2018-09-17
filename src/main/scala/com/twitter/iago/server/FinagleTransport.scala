@@ -16,13 +16,12 @@ limitations under the License.
 
 package com.twitter.iago.server
 
-import com.twitter.finagle.{Dtab, Http}
+import com.twitter.finagle.Http
 import com.twitter.finagle.http._
 import com.twitter.io.Buf
 import com.twitter.iago._
 import com.twitter.util._
-import java.nio.ByteOrder.BIG_ENDIAN
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 object FinagleTransportFactory extends ParrotTransportFactory[ParrotRequest, Response] {
   def apply(config: ParrotServerFlags) = {
@@ -49,7 +48,7 @@ object FinagleTransportFactory extends ParrotTransportFactory[ParrotRequest, Res
 class FinagleTransport(service: FinagleServiceAbstraction, includeParrotHeader: Boolean)
     extends ParrotTransport[ParrotRequest, Response] {
 
-  var allRequests = 0
+  var allRequests = new AtomicLong(0)
   override def stats(response: Response) = Some(Seq(response.statusCode.toString))
 
   override def sendRequest(request: ParrotRequest): Future[Response] = {
@@ -91,7 +90,7 @@ class FinagleTransport(service: FinagleServiceAbstraction, includeParrotHeader: 
       httpRequest.content = buffer
     }
 
-    allRequests += 1
+    allRequests.incrementAndGet()
 
     log.debug(
       """
