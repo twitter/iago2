@@ -1,6 +1,7 @@
 <a name="Top"></a>
 
 # Iago, A Load Generator
+[![Build Status](https://secure.travis-ci.org/twitter/iago2.png)](http://travis-ci.org/twitter/iago2)
 
 ## Documentation
 
@@ -33,6 +34,11 @@ And please check out our Code of Conduct <a href="https://github.com/twitter/cod
 Iago2 is under <a href="https://github.com/twitter/iago2/blob/master/LICENSE">Apache License 2.0</a>
 
 ## ChangeLog
+
+2018-09-18
+
+* fixed an issue that local iago server fails to start sometimes
+* fixed flaky unit tests
 
 2018-07-23
 

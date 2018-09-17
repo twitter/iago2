@@ -15,21 +15,20 @@ limitations under the License.
  */
 package com.twitter.iago.util
 
-import java.net.{InetAddress, InetSocketAddress}
+import java.net.{InetAddress, InetSocketAddress, Socket}
 import java.util.concurrent.{CountDownLatch, TimeUnit}
-
 import com.google.common.collect.ImmutableSet
 import com.twitter.app.GlobalFlag
 import com.twitter.common.net.pool.DynamicHostSet.HostChangeMonitor
 import com.twitter.common.quantity.{Amount, Time}
 import com.twitter.common.zookeeper.ServerSet.EndpointStatus
 import com.twitter.common.zookeeper.{ServerSetImpl, ZooKeeperClient}
-import com.twitter.finagle.util.InetSocketAddressUtil
+import com.twitter.finagle.util.{DefaultTimer, InetSocketAddressUtil}
 import com.twitter.logging.{Level, Logger}
 import com.twitter.iago.ParrotFlags
 import com.twitter.thrift.{Endpoint, ServiceInstance, Status}
-import com.twitter.util.Duration
-
+import com.twitter.util.{Await, Duration, Future, FuturePool}
+import java.io.IOException
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.language.postfixOps
@@ -290,6 +289,7 @@ class ParrotClusterImpl(config: ParrotFlags)
           config.finagleTimeoutF(),
           config.batchSizeF()
         )
+        checkParrotServer(address, Duration(30, TimeUnit.SECONDS))
         _runningParrots += parrot
         Some(parrot)
       } catch {
@@ -298,6 +298,41 @@ class ParrotClusterImpl(config: ParrotFlags)
           None
       }
     }
+
+  private[this] def checkParrotServer(address: InetSocketAddress, timeout: Duration): Unit = {
+    val futurePool = FuturePool.interruptibleUnboundedPool
+    val timer = DefaultTimer.twitter
+
+    def isConnectable(address: InetSocketAddress): Boolean = {
+      val socket = new Socket()
+      try {
+        socket.connect(address, 1000)
+        true
+      } catch { case e: IOException =>
+        log.info("Parrot server at %s is not available yet: %s", address, e.getMessage)
+        false
+      } finally {
+        socket.close()
+      }
+    }
+
+    def checkConnectivity(address: InetSocketAddress): Future[Unit] = {
+      futurePool(isConnectable(address))
+        .delayed(Duration(1000, TimeUnit.MILLISECONDS))(timer).flatMap {
+        case true => Future.Unit
+        case _ => checkConnectivity(address)
+      }
+    }
+
+    Await.result(
+      checkConnectivity(address)
+        .raiseWithin(
+          timer,
+          timeout,
+          new RuntimeException(s"Timeout waiting for parrot server at $address")
+        )
+    )
+  }
 
   private[this] def connectParrot(host: String, port: Int): Option[RemoteParrot] = {
 
