@@ -1,7 +1,7 @@
 <a name="Top"></a>
 
 # Iago, A Load Generator
-[![Build Status](https://secure.travis-ci.org/twitter/iago2.png)](http://travis-ci.org/twitter/iago2)
+[![Build Status](https://travis-ci.com/twitter/iago2.svg?branch=master)](http://travis-ci.com/twitter/iago2)
 
 ## Documentation
 
@@ -39,6 +39,7 @@ Iago2 is under <a href="https://github.com/twitter/iago2/blob/master/LICENSE">Ap
 
 * fixed an issue that local iago server fails to start sometimes
 * fixed flaky unit tests
+* updated README.md and travis-ci config
 
 2018-07-23
 

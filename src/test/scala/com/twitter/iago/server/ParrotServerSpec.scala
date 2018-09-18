@@ -82,7 +82,7 @@ class ParrotServerSpec
         }
      */
     "support being shutdown" in {
-      parrotServer.shutdown()
+      Await.result(parrotServer.shutdown(), Duration(5000, TimeUnit.MILLISECONDS))
 
       val response = resolve(parrotServer.sendRequest(defaultLines))
       response.status must be(Some(ParrotState.Shutdown))
