@@ -7,6 +7,59 @@ Because Iago replays traffic, you must specify the source of the traffic. You us
 
 Replaying transactions at a fixed rate enables you to study the behavior of your service under an anticipated load. Iago also allows you to identify bottlenecks or other issues that may not be easily observable in a production environment in which your maximum anticipated load occurs only rarely.
 
+Philosophy
+~~~~~~~~~~
+Iago has a specific point of view about load testing. Understanding
+that point of view will help you to decide whether to use it.
+
+Iago is primarily a load generation library. It is designed
+for software engineers familiar with a JVM language such as
+Java or Scala. If you want to test an API under load, Iago is great.
+While you can use Iago as a stand-alone load testing application,
+this is not its strong suit today; if that is what you want, you will probably be
+happier with other tools.
+
+That said, if you are a programmer who wants to test an API under load, Iago is very easy
+to use. Stand-alone load-test applications are great if you want to repeatedly get
+http://example.com/, but if you instead want to repeatedly exercise an API, they
+probably don't do what you want. Iago shines here.
+
+If you've already written a test client for your API, you've probably already written
+the code that Iago can use to exercise that API. It usually requires
+more code to write a test client than it does to write a load test using Iago. Indeed,
+the code from a test client is usually just what you need to write your load test. This
+is deliberate, because we believe that people who most need Iago are those who find
+themselves writing their own load tests late at night after a release has gone bad.
+
+Iago accurately replicates production traffic. It models open systems,
+systems which recieve requests independent of their ability to service them.
+Typical load generators measure the
+time it takes for `M` threads to make `N` requests, waiting for a
+response to each request before sending the next; if your system slows down under load,
+these load testers thus mercifully slow down their pace to match.
+That's a fine thing to measure; many systems behave this way. But maybe your
+service isn't such a system; maybe it's exposed on the internet.
+Maybe you want to know how your system behaves when `N`
+requests per second come in with no "mercy" if it slows down.
+
+Iago focuses on requests per second and has built-in support for statistical
+models such as an exponential distribution (used to model a Poisson Process) and uniform
+distributions. You can also write your own request distribution, either
+in terms of sums of distribution or your own implementation. Iago
+reliably meets the arrival times your distribution specifies,
+even when rates and wait times are high.
+
+Iago supports arbitrarily high rates of traffic via
+built-in support for creating clusters: if one machine can't generate the load you need,
+then Iago can launch jobs on more machines. At Twitter, engineers regularly run load tests
+that generate in excess of 100K requests per second or more. Single instances of Iago
+can easily achieve anywhere from 1K to 10K rps from commodity hardware, only limited by
+the particulars of your protocol needs.
+
+You can extend or replace Iago's components. Because our target users are other
+engineers, it is critical that every knob be available to turn. You
+can write your own protocols, data sources, management interfaces or
+whatever else you can imagine.
 
 Supported Services
 ~~~~~~~~~~~~~~~~~~
